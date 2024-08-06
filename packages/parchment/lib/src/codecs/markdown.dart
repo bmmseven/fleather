@@ -364,6 +364,35 @@ class _ParchmentMarkdownEncoder extends Converter<ParchmentDocument, String> {
     return ' ' * (text.length - result.length);
   }
 
+  void handleEmbeded(
+      StringBuffer buffer, EmbedNode node, ParchmentStyle currentInlineStyle) {
+    //final rightPadding = _trimRight(buffer);
+
+    if (node.value.type == 'blank') {
+      final data = node.value.data;
+      final isOptional = data['optional'] ?? false;
+      buffer.write('[[');
+
+      if (isOptional) {
+        buffer.write('OPTIONAL:');
+      } else {
+        buffer.write('REQUIRED:');
+      }
+      buffer.write(data['instructions'] ?? '');
+      //buffer.write(rightPadding);
+
+      //final leftTrimmedText = node.value.trimLeft();
+
+      //buffer.write(' ' * (node.length - leftTrimmedText.length));
+
+      buffer.write(']]');
+
+      //buffer.write(leftTrimmedText);
+    } else {
+      buffer.write(node.value);
+    }
+  }
+
   void handleText(
       StringBuffer buffer, TextNode node, ParchmentStyle currentInlineStyle) {
     final style = node.style;
@@ -414,8 +443,12 @@ class _ParchmentMarkdownEncoder extends Converter<ParchmentDocument, String> {
       }
 
       for (final textNode in node.children) {
-        handleText(lineBuffer, textNode as TextNode, currentInlineStyle);
-        currentInlineStyle = textNode.style;
+        if (textNode is EmbedNode) {
+          handleEmbeded(lineBuffer, textNode, currentInlineStyle);
+        } else {
+          handleText(lineBuffer, textNode as TextNode, currentInlineStyle);
+          currentInlineStyle = textNode.style;
+        }
       }
 
       handleText(lineBuffer, TextNode(), currentInlineStyle);
