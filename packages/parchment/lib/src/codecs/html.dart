@@ -19,6 +19,7 @@ final _inlineAttributesParchmentToHtml = {
   ParchmentAttribute.link.key: 'a',
   ParchmentAttribute.backgroundColor.key: 'span',
   ParchmentAttribute.foregroundColor.key: 'span',
+  ParchmentAttribute.blank.key: 'bb',
 };
 
 const _indentWidthInPx = 32;

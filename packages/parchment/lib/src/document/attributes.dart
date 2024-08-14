@@ -99,12 +99,15 @@ class ParchmentAttribute<T> implements ParchmentAttributeBuilder<T> {
     ParchmentAttribute.direction.key: ParchmentAttribute.direction,
     ParchmentAttribute.alignment.key: ParchmentAttribute.alignment,
     ParchmentAttribute.indent.key: ParchmentAttribute.indent,
+    ParchmentAttribute.blank.key: ParchmentAttribute.blank,
   };
 
   // Inline attributes
 
   /// Bold style attribute.
   static const bold = _BoldAttribute();
+
+  static const blank = BlankAttributeBuilder._();
 
   /// Italic style attribute.
   static const italic = _ItalicAttribute();
@@ -526,6 +529,18 @@ class LinkAttributeBuilder extends ParchmentAttributeBuilder<String> {
   ParchmentAttribute<String> fromString(String value) =>
       ParchmentAttribute<String>._(key, scope, value);
 }
+
+class BlankAttributeBuilder extends ParchmentAttributeBuilder<String> {
+  static const _kBlank = 'bb';
+
+  const BlankAttributeBuilder._()
+      : super._(_kBlank, ParchmentAttributeScope.inline);
+
+  /// Creates a link attribute with specified link [value].
+  ParchmentAttribute<String> fromString(String value) =>
+      ParchmentAttribute<String>._(key, scope, value);
+}
+
 
 /// Builder for heading attribute styles.
 ///

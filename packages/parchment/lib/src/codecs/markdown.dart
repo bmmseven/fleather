@@ -5,6 +5,7 @@ import 'package:parchment_delta/parchment_delta.dart';
 import '../document/attributes.dart';
 import '../document.dart';
 import '../document/block.dart';
+import '../document/embeds.dart';
 import '../document/leaf.dart';
 import '../document/line.dart';
 
@@ -32,7 +33,9 @@ class _ParchmentMarkdownDecoder extends Converter<String, ParchmentDocument> {
     // strike through
     r'(~~(?<strike_through_text>.+?)~~)|'
     // inline code
-    r'(`(?<inline_code_text>.+?)`)',
+    r'(`(?<inline_code_text>.+?)`)|'
+    // blank
+    r'\[\[(?<blank_text>.+?)\]\]',
   );
 
   static final _linkRegExp = RegExp(r'\[(.+?)\]\(([^)]+)\)');
@@ -41,6 +44,7 @@ class _ParchmentMarkdownDecoder extends Converter<String, ParchmentDocument> {
   static final _clRegExp = RegExp(r'^( *)- +\[( |x|X)\] +(.*)');
   static final _bqRegExp = RegExp(r'^> *(.*)');
   static final _codeRegExpTag = RegExp(r'^( *)```');
+  static final _blanksRegExp = RegExp(r'\[\[(.+?):(.+?)\]\]');
 
   bool _inBlockStack = false;
 
@@ -216,6 +220,11 @@ class _ParchmentMarkdownDecoder extends Converter<String, ParchmentDocument> {
     span = span.substring(start);
 
     if (span.isNotEmpty) {
+      start = _handleBlanks(span, delta, outerStyle);
+      span = span.substring(start);
+    }
+
+    if (span.isNotEmpty) {
       start = _handleLinks(span, delta, outerStyle);
       span = span.substring(start);
     }
@@ -246,6 +255,8 @@ class _ParchmentMarkdownDecoder extends Converter<String, ParchmentDocument> {
     final matches = _styleRegExp.allMatches(span);
     for (final match in matches) {
       if (match.start > start) {
+        //check if this is a blank
+
         if (span.substring(match.start - 1, match.start) == '[') {
           delta.insert(
               span.substring(start, match.start - 1), outerStyle?.toJson());
@@ -321,6 +332,32 @@ class _ParchmentMarkdownDecoder extends Converter<String, ParchmentDocument> {
       return ParchmentStyle().put(ParchmentAttribute.bold);
     }
     return ParchmentStyle().put(ParchmentAttribute.italic);
+  }
+
+  int _handleBlanks(String span, Delta delta, ParchmentStyle? outerStyle) {
+    var start = 0;
+
+    final matches = _blanksRegExp.allMatches(span);
+    for (final match in matches) {
+      if (match.start > start) {
+        delta.insert(span.substring(start, match.start)); //, outerStyle);
+      }
+
+      final optional = match.group(1);
+      final instructions = match.group(2);
+      if (optional == null || instructions == null) {
+        return start;
+      }
+      delta.put(SpanEmbed('blank',
+          data: {'instructions': instructions, 'optional': optional == 'OPTIONAL'}));
+      /*final newStyle = (outerStyle ?? ParchmentStyle())
+          .put(ParchmentAttribute.link.fromString(href));
+
+      _handleSpan(text, delta, false, newStyle);*/
+      start = match.end;
+    }
+
+    return start;
   }
 
   int _handleLinks(String span, Delta delta, ParchmentStyle? outerStyle) {
