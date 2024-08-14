@@ -353,7 +353,7 @@ class _ParchmentMarkdownDecoder extends Converter<String, ParchmentDocument> {
         return start;
       }
 
-      delta.put(SpanEmbed('blank', data: {
+      delta.insert(SpanEmbed('blank', data: {
         'instructions': instructions,
         'optional': optional == 'OPTIONAL'
       }));
