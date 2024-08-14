@@ -224,10 +224,10 @@ class _ParchmentMarkdownDecoder extends Converter<String, ParchmentDocument> {
       span = span.substring(start);
     }
 
-    if (span.isNotEmpty) {
+    /*if (span.isNotEmpty) {
       start = _handleLinks(span, delta, outerStyle);
       span = span.substring(start);
-    }
+    }*/
 
     if (span.isNotEmpty) {
       if (addNewLine) {
@@ -258,6 +258,7 @@ class _ParchmentMarkdownDecoder extends Converter<String, ParchmentDocument> {
         //check if this is a blank
 
         if (span.substring(match.start - 1, match.start) == '[') {
+          print('Might be a blank');
           delta.insert(
               span.substring(start, match.start - 1), outerStyle?.toJson());
           start = match.start -
@@ -346,10 +347,15 @@ class _ParchmentMarkdownDecoder extends Converter<String, ParchmentDocument> {
       final optional = match.group(1);
       final instructions = match.group(2);
       if (optional == null || instructions == null) {
+        print(
+            'Invalid blank: optional: $optional, instructions: $instructions');
         return start;
       }
-      delta.put(SpanEmbed('blank',
-          data: {'instructions': instructions, 'optional': optional == 'OPTIONAL'}));
+
+      delta.put(SpanEmbed('blank', data: {
+        'instructions': instructions,
+        'optional': optional == 'OPTIONAL'
+      }));
       /*final newStyle = (outerStyle ?? ParchmentStyle())
           .put(ParchmentAttribute.link.fromString(href));
 
