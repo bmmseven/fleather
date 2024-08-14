@@ -35,7 +35,7 @@ class _ParchmentMarkdownDecoder extends Converter<String, ParchmentDocument> {
     // inline code
     r'(`(?<inline_code_text>.+?)`)|'
     // blank
-    r'\[\[(?<blank_text>.+?)\]\]',
+    //r'\[\[(?<blank_text>.+?)\]\]',
   );
 
   static final _linkRegExp = RegExp(r'\[(.+?)\]\(([^)]+)\)');
