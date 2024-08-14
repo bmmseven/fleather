@@ -337,9 +337,10 @@ class _ParchmentMarkdownDecoder extends Converter<String, ParchmentDocument> {
 
   int _handleBlanks(String span, Delta delta, ParchmentStyle? outerStyle) {
     var start = 0;
-
+    print('Handling blanks: $span');
     final matches = _blanksRegExp.allMatches(span);
     for (final match in matches) {
+      print('Blank match: $match');
       if (match.start > start) {
         delta.insert(span.substring(start, match.start)); //, outerStyle);
       }
