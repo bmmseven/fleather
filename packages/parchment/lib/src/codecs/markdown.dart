@@ -33,7 +33,7 @@ class _ParchmentMarkdownDecoder extends Converter<String, ParchmentDocument> {
     // strike through
     r'(~~(?<strike_through_text>.+?)~~)|'
     // inline code
-    r'(`(?<inline_code_text>.+?)`)|'
+    r'(`(?<inline_code_text>.+?)`)'
     // blank
     //r'\[\[(?<blank_text>.+?)\]\]',
   );
