@@ -100,4 +100,6 @@ class BlockEmbed extends EmbeddableObject {
   static final BlockEmbed horizontalRule = BlockEmbed('hr');
   static BlockEmbed image(String source) =>
       BlockEmbed('image', data: {'source': source});
+  static BlockEmbed blank(String instructions, bool isOptional) =>
+      BlockEmbed('blank', data: {'instructions': instructions, 'optional': isOptional});
 }

@@ -57,7 +57,8 @@ class _ParchmentMarkdownDecoder extends Converter<String, ParchmentDocument> {
       _handleLine(line, delta);
     }
 
-    return ParchmentDocument.fromDelta(delta.compose(Delta.fromJson([]))..trim());
+    return ParchmentDocument.fromDelta(
+        delta.compose(Delta.fromJson([]))..trim());
     //return ParchmentDocument.fromDelta(delta..trim());
   }
 
@@ -364,6 +365,8 @@ class _ParchmentMarkdownDecoder extends Converter<String, ParchmentDocument> {
         'instructions': instructions,
         'optional': optional == 'OPTIONAL'
       }));
+      //add space after blank
+      delta.insert(' ');
       /*final newStyle = (outerStyle ?? ParchmentStyle())
           .put(ParchmentAttribute.link.fromString(href));
 
