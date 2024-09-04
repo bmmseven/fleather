@@ -24,19 +24,19 @@ class ParchmentMarkdownCodec extends Codec<ParchmentDocument, String> {
 class _ParchmentMarkdownDecoder extends Converter<String, ParchmentDocument> {
   static final _headingRegExp = RegExp(r'(#+) *(.+)');
   static final _styleRegExp = RegExp(
-    // italic then bold
-    r'(([*_])(\*{2}|_{2})(?<italic_bold_text>.*?[^ \3\2])\3\2)|'
-    // bold then italic
-    r'((\*{2}|_{2})([*_])(?<bold_italic_text>.*?[^ \7\6])\7\6)|'
-    // italic or bold
-    r'(((\*{1,2})|(_{1,2}))(?<bold_or_italic_text>.*?[^ \10])\10)|'
-    // strike through
-    r'(~~(?<strike_through_text>.+?)~~)|'
-    // inline code
-    r'(`(?<inline_code_text>.+?)`)'
-    // blank
-    //r'\[\[(?<blank_text>.+?)\]\]',
-  );
+      // italic then bold
+      r'(([*_])(\*{2}|_{2})(?<italic_bold_text>.*?[^ \3\2])\3\2)|'
+      // bold then italic
+      r'((\*{2}|_{2})([*_])(?<bold_italic_text>.*?[^ \7\6])\7\6)|'
+      // italic or bold
+      r'(((\*{1,2})|(_{1,2}))(?<bold_or_italic_text>.*?[^ \10])\10)|'
+      // strike through
+      r'(~~(?<strike_through_text>.+?)~~)|'
+      // inline code
+      r'(`(?<inline_code_text>.+?)`)'
+      // blank
+      //r'\[\[(?<blank_text>.+?)\]\]',
+      );
 
   static final _linkRegExp = RegExp(r'\[(.+?)\]\(([^)]+)\)');
   static final _ulRegExp = RegExp(r'^( *)\* +(.*)');
@@ -276,8 +276,8 @@ class _ParchmentMarkdownDecoder extends Converter<String, ParchmentDocument> {
         }
       }
 
-      final String text;
-      final String styleTag;
+      String text = '';
+      String? styleTag;
       if (match.namedGroup('italic_bold_text') != null) {
         text = match.namedGroup('italic_bold_text')!;
         styleTag = '${match.group(2)}${match.group(3)}';
@@ -290,14 +290,16 @@ class _ParchmentMarkdownDecoder extends Converter<String, ParchmentDocument> {
       } else if (match.namedGroup('strike_through_text') != null) {
         text = match.namedGroup('strike_through_text')!;
         styleTag = '~~';
-      } else {
-        assert(match.namedGroup('inline_code_text') != null);
+      } else if (match.namedGroup('inline_code_text') != null) {
         text = match.namedGroup('inline_code_text')!;
         styleTag = '`';
       }
-      var newStyle = _fromStyleTag(styleTag);
+      ParchmentStyle? newStyle;
+      if (styleTag != null) {
+        newStyle = _fromStyleTag(styleTag);
+      }
 
-      if (outerStyle != null) {
+      if (outerStyle != null && newStyle != null) {
         newStyle = newStyle.mergeAll(outerStyle);
       }
 
