@@ -345,11 +345,10 @@ class _ParchmentMarkdownDecoder extends Converter<String, ParchmentDocument> {
 
   int _handleBlanks(String span, Delta delta, ParchmentStyle? outerStyle) {
     var start = 0;
-    print('Handling blanks: $span');
     final matches = _blanksRegExp.allMatches(span);
     for (final match in matches) {
-      print('Blank match: $match');
       if (match.start > start) {
+        print('Inserting span: $match');
         delta.insert(span.substring(start, match.start)); //, outerStyle);
       }
 
@@ -360,7 +359,7 @@ class _ParchmentMarkdownDecoder extends Converter<String, ParchmentDocument> {
             'Invalid blank: optional: $optional, instructions: $instructions');
         return start;
       }
-
+      print('Inserting blank: $match');
       delta.insert(SpanEmbed('blank', data: {
         'instructions': instructions,
         'optional': optional == 'OPTIONAL'
@@ -371,7 +370,6 @@ class _ParchmentMarkdownDecoder extends Converter<String, ParchmentDocument> {
       _handleSpan(text, delta, false, newStyle);*/
       start = match.end;
     }
-
     return start;
   }
 
