@@ -366,7 +366,7 @@ class _ParchmentMarkdownDecoder extends Converter<String, ParchmentDocument> {
         'optional': optional == 'OPTIONAL'
       }));
       //add space after blank
-      delta.insert(' ');
+      //delta.insert(' ');
       /*final newStyle = (outerStyle ?? ParchmentStyle())
           .put(ParchmentAttribute.link.fromString(href));
 
