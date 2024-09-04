@@ -57,7 +57,8 @@ class _ParchmentMarkdownDecoder extends Converter<String, ParchmentDocument> {
       _handleLine(line, delta);
     }
 
-    return ParchmentDocument.fromDelta(delta..trim());
+    return ParchmentDocument.fromDelta(delta.compose(Delta.fromJson([]))..trim());
+    //return ParchmentDocument.fromDelta(delta..trim());
   }
 
   void _handleLine(String line, Delta delta, [ParchmentStyle? style]) {
